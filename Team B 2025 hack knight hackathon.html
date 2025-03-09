@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banking App Simulation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    /* App container now has phone screens first and controls on the right */
+    .app-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+    /* Phone screens container with a smaller gap between phones */
+    .phone-screens {
+      display: flex;
+      gap: 10px;
+    }
+    .smartphone {
+      position: relative;
+      width: 340px;
+      height: 660px;
+      background-color: white;
+      border: 10px solid black;
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      transition: transform 0.5s ease;
+    }
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 10px;
+      background-color: white;
+      font-size: 12px;
+      color: #333;
+    }
+    .time {
+      font-weight: bold;
+    }
+    .status-icons {
+      display: flex;
+      align-items: center;
+    }
+    .status-icons span {
+      margin-left: 5px;
+    }
+    .screen {
+      width: 100%;
+      height: calc(100% - 30px);
+      position: relative;
+      padding: 0 20px;
+      box-sizing: border-box;
+      background-color: white;
+    }
+    .app-screen {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      display: none;
+      overflow-y: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .app-screen::-webkit-scrollbar {
+      display: none;
+    }
+    /* Login Screen */
+    .login-screen {
+      display: block;
+      padding-top: 20px;
+    }
+    .logo img,
+    .home-logo img {
+      height: 25px;
+    }
+    .logo,
+    .home-logo {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .profile-section {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+    }
+    .profile-image {
+      width: 80px;
+      height: 80px;
+      background-color: #f0f0f0;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 20px;
+    }
+    .profile-icon {
+      width: 30px;
+      height: 30px;
+      background-color: #999;
+      border-radius: 50%;
+      position: relative;
+    }
+    .profile-icon:after {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 15px;
+      background-color: #999;
+      border-radius: 15px 15px 0 0;
+      top: 30px;
+      left: 0;
+    }
+    .switch-profile {
+      color: #0077b6;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .input-field {
+      position: relative;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+    }
+    .input-icon {
+      margin-right: 10px;
+      color: #666;
+    }
+    input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 16px;
+      background: transparent;
+    }
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .toggle {
+      position: relative;
+      width: 48px;
+      height: 24px;
+      background-color: #ccc;
+      border-radius: 12px;
+      margin-right: 10px;
+    }
+    .toggle-slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background-color: white;
+      border-radius: 50%;
+    }
+    .toggle-text {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .sign-in-btn {
+      background-color: #0077b6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 15px;
+      font-size: 18px;
+      width: 100%;
+      cursor: pointer;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .forgot-link, .setup-link {
+      color: #0077b6;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    .footer-link {
+      color: #0077b6;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0 10px;
+    }
+    .footer-link:after {
+      content: '|';
+      margin-left: 20px;
+      color: #000;
+    }
+    .footer-link:last-child:after {
+      content: '';
+    }
+    .language {
+      color: #0077b6;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    /* Popup styles */
+    .popup-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    .popup-content {
+      background-color: white;
+      width: 90%;
+      max-height: 80%;
+      border-radius: 15px;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .welcome-message {
+      text-align: center;
+    }
+    .welcome-message h2 {
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+    .welcome-message p {
+      margin-bottom: 15px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .accept-btn {
+      background-color: #00aa66;
+      border: none;
+      padding: 10px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      flex: 1;
+      margin-right: 5px;
+    }
+    #primaryPhone {
+  margin-left: 140px;
+}
+
+    .decline-btn {
+      background-color: #cc3300;
+      border: none;
+      padding: 10px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      flex: 1;
+      margin-left: 5px;
+    }
+    /* Home Screen styles */
+    .home-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .promo-banner {
+      background-color: #003057;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      margin: 0 -20px;
+    }
+    .promo-banner p {
+      margin: 5px 0;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .promo-link {
+      color: white;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+    .accounts-container {
+      flex: 1;
+      padding: 0;
+      overflow-y: auto;
+    }
+    .account-card {
+      margin: 10px 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .checking-card {
+      background-color: #003057;
+      color: white;
+      padding: 20px;
+    }
+    .quicksilver-card {
+      background-color: #4b4f56;
+      color: white;
+      padding: 20px;
+    }
+    .card-number {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+    .card-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .card-balance {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .balance-label {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    .action-button {
+      padding: 10px 15px;
+      border: 1px solid white;
+      display: inline-block;
+      margin-top: 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .new-account-btn {
+      margin: 10px 0;
+      padding: 15px;
+      border: 1px solid #0066cc;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      color: #0066cc;
+      cursor: pointer;
+    }
+    .new-account-icon {
+      margin-right: 10px;
+      font-size: 20px;
+      border: 2px solid #0066cc;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .transaction-log {
+      margin: 20px 0;
+    }
+    .transaction-log h3 {
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      font-size: 14px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .transaction-amount {
+      font-weight: bold;
+    }
+    .transaction-date {
+      color: #666;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    /* Bottom Navigation */
+    .bottom-nav {
+      display: none;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+      height: 50px;
+      background-color: white;
+      border-top: 1px solid black;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      left: 0;
+    }
+    .nav-item {
+      text-align: center;
+      font-size: 12px;
+      color: black;
+    }
+    .nav-icon {
+      margin-bottom: 5px;
+    }
+    .nav-label {
+      font-size: 12px;
+      font-weight: bold;
+    }
+    /* External controls */
+    .external-controls {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+    /* Second Phone Screen: Remove header and split into a static and scrollable section */
+    .second-phone .screen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .roundup-container {
+      flex-shrink: 0;
+      padding: 10px 0;
+      border-bottom: 1px solid #ccc;
+      text-align: center;
+    }
+    .scrollable-section {
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Phone Screens Container -->
+    <div class="phone-screens">
+      <!-- Primary Phone Screen -->
+      <div class="smartphone" id="primaryPhone">
+        <div class="status-bar">
+          <div class="time">5:32 <span>⧁</span> 42°</div>
+          <div class="status-icons">
+            <span>⏰</span>
+            <span>🔕</span>
+            <span>📶</span>
+            <span>58%🔋</span>
+          </div>
+        </div>
+        <div class="screen">
+          <!-- Login Screen -->
+          <div class="app-screen login-screen" id="loginScreen">
+            <div class="logo">
+              <img src="Capital_One_logo.svg.png" alt="Capital One logo">
+            </div>
+            <div class="profile-section">
+              <div class="profile-image">
+                <div class="profile-icon"></div>
+              </div>
+              <div class="switch-profile">Switch profile</div>
+            </div>
+            <div class="input-field">
+              <div class="input-icon">👤</div>
+              <input type="text" id="username" placeholder="Username">
+            </div>
+            <div class="input-field">
+              <div class="input-icon">🔒</div>
+              <input type="password" id="password" placeholder="Password">
+            </div>
+            <div class="remember-me">
+              <div class="toggle">
+                <div class="toggle-slider"></div>
+              </div>
+              <div class="toggle-text">Remember me</div>
+            </div>
+            <button id="loginBtn" class="sign-in-btn">Sign in</button>
+            <a href="#" class="forgot-link">Forgot username or password?</a>
+            <a href="#" class="setup-link">Set up online access</a>
+            <div class="footer">
+              <div class="footer-links">
+                <a href="#" class="footer-link">Product offerings</a>
+                <a href="#" class="footer-link">Security and privacy</a>
+              </div>
+              <a href="#" class="language">Español</a>
+            </div>
+          </div>
+          <!-- Popup -->
+          <div class="popup-overlay" id="savingsProgramPopup">
+            <div class="popup-content">
+              <div class="welcome-message">
+                <h2>Welcome to Round-Up Savings Program</h2>
+                <p>We're excited to introduce our completely <strong>FREE</strong> Round‑Up Savings Program!</p>
+                <p>How it works: Every time you make a purchase, we'll round up the amount to the nearest dollar and transfer the difference to your savings account.</p>
+                <p>For example, if you spend $3.75, we'll round up to $4.00 and transfer $0.25 to your savings account. This way, you save money while you spend!</p>
+                <div class="button-group">
+                  <button class="accept-btn" id="acceptBtn">Accept</button>
+                  <button class="decline-btn" id="declineBtn">Decline</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Home Screen -->
+          <div class="app-screen" id="homeScreen">
+            <div class="home-logo">
+              <img src="Capital_One_logo.svg.png" alt="Capital One logo">
+            </div>
+            <div class="promo-banner">
+              <p>Pre-qualify and see your real auto financing options with no credit score impact.</p>
+              <p><a href="#" class="promo-link">Try Auto Navigator now.</a></p>
+            </div>
+            <div class="accounts-container">
+              <div class="account-card">
+                <div class="checking-card">
+                  <div class="card-number">...1365</div>
+                  <div class="card-name">360 Checking</div>
+                  <!-- Primary checking now starts at $500.00 -->
+                  <div class="card-balance" id="checkingBalance1">$500.00</div>
+                  <div class="balance-label">Available Balance</div>
+                </div>
+              </div>
+              <div class="account-card">
+                <div class="quicksilver-card">
+                  <div class="card-number">...3735</div>
+                  <div class="card-name">QUICKSILVER</div>
+                  <div class="card-balance" id="creditBalance">$2,409.69</div>
+                  <div class="balance-label">Current Balance</div>
+                  <div class="action-button">Get your virtual card</div>
+                </div>
+              </div>
+              <div class="account-card">
+                <div class="checking-card">
+                  <div class="card-number">...6893</div>
+                  <div class="card-name">360 Checking</div>
+                  <div class="card-balance" id="checkingBalance2">$0.00</div>
+                  <div class="balance-label">Available Balance</div>
+                </div>
+              </div>
+              <div class="account-card" id="savingsCard" style="display:none;">
+                <div class="checking-card" style="background: linear-gradient(135deg, #00aa66, #00cc88);">
+                  <div class="card-number">...4527</div>
+                  <div class="card-name">Round-Up Savings</div>
+                  <div class="card-balance" id="savingsBalance">$0.00</div>
+                  <div class="balance-label">Available Balance</div>
+                </div>
+              </div>
+              <div class="new-account-btn">
+                <div class="new-account-icon">+</div>
+                Open a new account
+              </div>
+              <div class="transaction-log" id="transactionLog">
+                <h3>Recent Transactions</h3>
+                <!-- Transactions will be added here -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Bottom Navigation (shown after login) -->
+        <div class="bottom-nav">
+          <div class="nav-item active">
+            <div class="nav-icon">
+              <img src="capital one home icon.png" alt="Home Icon" style="height:24px;">
+            </div>
+            <div class="nav-label">Home</div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <img src="capital one benefits.png" alt="Benefits Icon" style="height:24px;">
+            </div>
+            <div class="nav-label">Benefits</div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <img src="capital one send money icon.png.png" alt="Send Money Icon" style="height:24px;">
+            </div>
+            <div class="nav-label">Pay/Move</div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <img src="capital one help icon.png" alt="Help Icon" style="height:24px;">
+            </div>
+            <div class="nav-label">Help</div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon">
+              <img src="capital one profile icon.png" alt="Profile Icon" style="height:24px;">
+            </div>
+            <div class="nav-label">Profile</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Second Phone Screen: Round‑Up Savings (initially hidden) -->
+      <div class="smartphone second-phone" id="roundUpPhone" style="display:none;">
+        <div class="status-bar">
+          <div class="time">5:32 <span>⧁</span> 42°</div>
+        </div>
+        <div class="screen">
+          <!-- Static Section: Round‑Up Savings Card remains fixed -->
+          <div class="roundup-container">
+            <div id="roundUpSavingsCardContainer">
+              <div class="account-card">
+                <div class="checking-card" style="background: linear-gradient(135deg, #00aa66, #00cc88);">
+                  <div class="card-number">...4527</div>
+                  <div class="card-name">Round‑Up Savings</div>
+                  <div class="card-balance" id="roundUpSavingsBalance">$0.00</div>
+                  <div class="balance-label">Available Balance</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Scrollable Section: Transaction Log Copy -->
+          <div class="scrollable-section">
+            <div class="transaction-log" id="transactionLogCopy">
+              <h3>Recent Transactions</h3>
+              <!-- Transactions will be copied here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- External Controls -->
+    <div class="external-controls">
+      <button id="simulatePurchaseBtn">Simulate a Purchase</button>
+      <button id="showRoundUpScreenBtn">Show Round‑Up Screen</button>
+    </div>
+  </div>
+  
+  <script>
+    // Variables to store account balances
+    let checkingBalance1 = 500.00; // Primary checking 
+    let checkingBalance2 = 0.00;
+    let creditBalance = 2409.69;
+    let savingsBalance = 0.00;
+    let roundUpEnabled = false;
+    
+    // DOM elements
+    const loginScreen = document.getElementById('loginScreen');
+    const savingsProgramPopup = document.getElementById('savingsProgramPopup');
+    const homeScreen = document.getElementById('homeScreen');
+    const loginBtn = document.getElementById('loginBtn');
+    const acceptBtn = document.getElementById('acceptBtn');
+    const declineBtn = document.getElementById('declineBtn');
+    const simulatePurchaseBtn = document.getElementById('simulatePurchaseBtn');
+    const showRoundUpScreenBtn = document.getElementById('showRoundUpScreenBtn');
+    const checkingBalance1El = document.getElementById('checkingBalance1');
+    const checkingBalance2El = document.getElementById('checkingBalance2');
+    const creditBalanceEl = document.getElementById('creditBalance');
+    const savingsBalanceEl = document.getElementById('savingsBalance');
+    const roundUpSavingsBalanceEl = document.getElementById('roundUpSavingsBalance');
+    const savingsCard = document.getElementById('savingsCard');
+    const transactionLog = document.getElementById('transactionLog');
+    const transactionLogCopy = document.getElementById('transactionLogCopy');
+    const bottomNav = document.querySelector('.bottom-nav');
+    const primaryPhone = document.getElementById('primaryPhone');
+    const roundUpPhone = document.getElementById('roundUpPhone');
+    
+    // Event listeners
+    loginBtn.addEventListener('click', handleLogin);
+    acceptBtn.addEventListener('click', () => handleRoundUpChoice(true));
+    declineBtn.addEventListener('click', () => handleRoundUpChoice(false));
+    simulatePurchaseBtn.addEventListener('click', simulatePurchase);
+    showRoundUpScreenBtn.addEventListener('click', showRoundUpScreen);
+    
+    function handleLogin() {
+      loginScreen.style.display = 'none';
+      homeScreen.style.display = 'block';
+      bottomNav.style.display = 'flex';
+      setTimeout(() => {
+        savingsProgramPopup.style.display = 'flex';
+      }, 1000);
+    }
+    
+    function handleRoundUpChoice(accepted) {
+      roundUpEnabled = accepted;
+      savingsProgramPopup.style.display = 'none';
+      savingsCard.style.display = accepted ? 'block' : 'none';
+      updateBalanceDisplays();
+    }
+    
+    function updateBalanceDisplays() {
+      checkingBalance1El.textContent = `$${checkingBalance1.toFixed(2)}`;
+      checkingBalance2El.textContent = `$${checkingBalance2.toFixed(2)}`;
+      creditBalanceEl.textContent = `$${creditBalance.toFixed(2)}`;
+      savingsBalanceEl.textContent = `$${savingsBalance.toFixed(2)}`;
+      if(roundUpSavingsBalanceEl) {
+        roundUpSavingsBalanceEl.textContent = `$${savingsBalance.toFixed(2)}`;
+      }
+    }
+    
+    function addTransaction(description, amount, isRoundUp = false) {
+      const transactionEl = document.createElement('div');
+      transactionEl.className = 'transaction-item';
+      const now = new Date();
+      const dateStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      transactionEl.innerHTML = `
+        <div>
+          <div>${description}</div>
+          <div class="transaction-date">${dateStr}</div>
+        </div>
+        <div class="transaction-amount" style="color:${amount < 0 ? '#cc3300' : '#00aa66'}">
+          ${amount < 0 ? '-' : '+'}$${Math.abs(amount).toFixed(2)}
+        </div>
+      `;
+      transactionLog.insertBefore(transactionEl, transactionLog.children[1]);
+      if (transactionLogCopy) {
+        const clone = transactionEl.cloneNode(true);
+        transactionLogCopy.insertBefore(clone, transactionLogCopy.children[1]);
+      }
+    }
+    
+    function simulatePurchase() {
+      const purchaseAmount = (Math.random() * 8.99 + 1).toFixed(2);
+      const purchase = parseFloat(purchaseAmount);
+      if (checkingBalance1 < purchase) {
+        alert("Insufficient funds for this purchase.");
+        return;
+      }
+      checkingBalance1 -= purchase;
+      addTransaction("Purchase", -purchase);
+      if (roundUpEnabled) {
+        const roundUpTo = Math.ceil(purchase);
+        const roundUpAmount = roundUpTo - purchase;
+        savingsBalance += roundUpAmount;
+        addTransaction("Savings Deposit", roundUpAmount, true);
+      }
+      updateBalanceDisplays();
+    }
+    
+    function showRoundUpScreen() {
+      if (roundUpPhone.style.display === 'block') {
+        roundUpPhone.style.display = 'none';
+        primaryPhone.style.transform = 'translateX(0)';
+      } else {
+        roundUpPhone.style.display = 'block';
+        primaryPhone.style.transform = 'translateX(0)';
+      }
+    }
+  </script>
+</body>
+</html>
