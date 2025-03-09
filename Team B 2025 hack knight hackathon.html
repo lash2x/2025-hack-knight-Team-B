@@ -68,15 +68,16 @@
       overflow-y: auto;
     }
     
+    /* Login Screen */
     .login-screen {
       display: block;
       padding-top: 20px;
     }
     
-    .help-text {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 10px;
+    /* Shrink the Capital One logo on both pages */
+    .logo img,
+    .home-logo img {
+      height: 25px; /* Adjust this value as needed */
     }
     
     .logo {
@@ -85,8 +86,10 @@
       margin: 20px 0;
     }
     
-    .logo img {
-      height: 40px;
+    .home-logo {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
     }
     
     .profile-section {
@@ -143,12 +146,6 @@
     
     .input-icon {
       margin-right: 10px;
-      color: #666;
-    }
-    
-    .password-eye {
-      position: absolute;
-      right: 15px;
       color: #666;
     }
     
@@ -210,10 +207,11 @@
       font-weight: bold;
       display: block;
       margin-bottom: 20px;
+      text-align: center;
     }
     
     .footer {
-      margin-top: 80px;
+      margin-top: 20px;
       text-align: center;
     }
     
@@ -248,7 +246,7 @@
       font-weight: bold;
     }
     
-    /* Popup styles from second document */
+    /* Popup styles */
     .popup-overlay {
       position: absolute;
       top: 0;
@@ -294,13 +292,27 @@
     
     .accept-btn {
       background-color: #00aa66;
+      border: none;
+      padding: 10px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      flex: 1;
+      margin-right: 5px;
     }
     
     .decline-btn {
       background-color: #cc3300;
+      border: none;
+      padding: 10px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      flex: 1;
+      margin-left: 5px;
     }
     
-    /* Home Screen styles from second document */
+    /* Home Screen styles */
     .home-screen {
       display: flex;
       flex-direction: column;
@@ -382,6 +394,7 @@
       margin-top: 15px;
       border-radius: 20px;
       font-size: 14px;
+      cursor: pointer;
     }
     
     .new-account-btn {
@@ -392,6 +405,7 @@
       display: flex;
       align-items: center;
       color: #0066cc;
+      cursor: pointer;
     }
     
     .new-account-icon {
@@ -434,12 +448,15 @@
       margin-top: 5px;
     }
     
+    /* Bottom Navigation */
     .bottom-nav {
-      display: flex;
+      display: none;
+      flex-direction: row;
       justify-content: space-around;
       align-items: center;
       height: 50px;
-      background-color: black;
+      background-color: white;
+      border-top: 1px solid black;
       position: absolute;
       bottom: 0;
       width: 100%;
@@ -449,21 +466,16 @@
     .nav-item {
       text-align: center;
       font-size: 12px;
-      color: white;
+      color: black;
     }
     
     .nav-icon {
-      font-size: 20px;
       margin-bottom: 5px;
     }
     
-    .nav-item.active {
-      color: #0077b6;
-    }
-    
-    .external-controls {
-      margin-top: 20px;
-      text-align: center;
+    .nav-label {
+      font-size: 12px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -479,17 +491,10 @@
       </div>
     </div>
     <div class="screen">
-      <!-- Login Screen from first document -->
+      <!-- Login Screen -->
       <div class="app-screen login-screen" id="loginScreen">
-        <div class="help-text">Help</div>
-        
         <div class="logo">
-          <svg width="200" height="40" viewBox="0 0 200 40">
-            <path d="M35,20 C35,28.8 27.8,36 19,36 C10.2,36 3,28.8 3,20 C3,11.2 10.2,4 19,4 C27.8,4 35,11.2 35,20 Z" fill="#CF3339"/>
-            <path d="M170,36 L190,4 L175,4 L155,36 Z" fill="#CF3339"/>
-            <text x="40" y="25" font-family="Arial" font-size="18" font-weight="bold" fill="#004977">Capital</text>
-            <text x="105" y="25" font-family="Arial" font-size="18" font-weight="bold" fill="#004977">One</text>
-          </svg>
+          <img src="Capital_One_logo.svg.png" alt="Capital One logo">
         </div>
         
         <div class="profile-section">
@@ -507,7 +512,6 @@
         <div class="input-field">
           <div class="input-icon">🔒</div>
           <input type="password" id="password" placeholder="Password">
-          <div class="password-eye">👁️</div>
         </div>
         
         <div class="remember-me">
@@ -531,7 +535,7 @@
         </div>
       </div>
       
-      <!-- Popup from second document -->
+      <!-- Popup -->
       <div class="popup-overlay" id="savingsProgramPopup">
         <div class="popup-content">
           <div class="welcome-message">
@@ -547,8 +551,12 @@
         </div>
       </div>
       
-      <!-- Home Screen from second document -->
+      <!-- Home Screen -->
       <div class="app-screen" id="homeScreen">
+        <div class="home-logo">
+          <img src="Capital_One_logo.svg.png" alt="Capital One logo">
+        </div>
+        
         <div class="promo-banner">
           <p>Pre-qualify and see your real auto financing options with no credit score impact.</p>
           <p><a href="#" class="promo-link">Try Auto Navigator now.</a></p>
@@ -605,30 +613,49 @@
       </div>
     </div>
     
+    <    <!-- Bottom Navigation (shown after login) -->
     <div class="bottom-nav">
+      <!-- Home -->
       <div class="nav-item active">
-        <div class="nav-icon">🏠</div>
-        Home
+        <div class="nav-icon">
+          <img src="capital one home icon.png" alt="Home Icon" style="height:24px;">
+        </div>
+        <div class="nav-label">Home</div>
       </div>
+      
+      <!-- Benefits -->
       <div class="nav-item">
-        <div class="nav-icon">🎁</div>
-        Benefits
+        <div class="nav-icon">
+          <img src="capital one benefits.png" alt="Benefits Icon" style="height:24px;">
+        </div>
+        <div class="nav-label">Benefits</div>
       </div>
+      
+      <!-- Pay/Move (Send Money using the original unfilled version) -->
       <div class="nav-item">
-        <div class="nav-icon">💲</div>
-        Pay/Move
+        <div class="nav-icon">
+          <img src="capital one send money icon.png.png" alt="Send Money Icon" style="height:24px;">
+        </div>
+        <div class="nav-label">Pay/Move</div>
       </div>
+      
+      <!-- Help -->
       <div class="nav-item">
-        <div class="nav-icon">❓</div>
-        Help
+        <div class="nav-icon">
+          <img src="capital one help icon.png" alt="Help Icon" style="height:24px;">
+        </div>
+        <div class="nav-label">Help</div>
       </div>
+      
+      <!-- Profile -->
       <div class="nav-item">
-        <div class="nav-icon">👤</div>
-        Profile
+        <div class="nav-icon">
+          <img src="capital one profile icon.png" alt="Profile Icon" style="height:24px;">
+        </div>
+        <div class="nav-label">Profile</div>
       </div>
     </div>
-  </div>
-  
+
   <div class="external-controls">
     <button id="simulatePurchaseBtn">Simulate a Purchase</button>
   </div>
@@ -655,6 +682,7 @@
     const savingsBalanceEl = document.getElementById('savingsBalance');
     const savingsCard = document.getElementById('savingsCard');
     const transactionLog = document.getElementById('transactionLog');
+    const bottomNav = document.querySelector('.bottom-nav');
     
     // Event listeners
     loginBtn.addEventListener('click', handleLogin);
@@ -666,6 +694,8 @@
     function handleLogin() {
       loginScreen.style.display = 'none';
       homeScreen.style.display = 'block';
+      // Show bottom navigation after login
+      bottomNav.style.display = 'flex';
       
       // Show the savings program popup after a slight delay
       setTimeout(() => {
