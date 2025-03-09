@@ -11,14 +11,14 @@
       margin: 0;
       padding: 20px;
     }
-    /* App container now has phone screens first and controls on the right */
+    /* App container  */
     .app-container {
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 20px;
     }
-    /* Phone screens container with a smaller gap between phones */
+    /* Phone screens container  */
     .phone-screens {
       display: flex;
       gap: 10px;
@@ -433,7 +433,7 @@
       justify-content: center;
       gap: 10px;
     }
-    /* Second Phone Screen: Remove header and split into a static and scrollable section */
+    /* Second Phone Screen:has a static section and a scrollable section */
     .second-phone .screen {
       display: flex;
       flex-direction: column;
@@ -532,7 +532,7 @@
                 <div class="checking-card">
                   <div class="card-number">...1365</div>
                   <div class="card-name">360 Checking</div>
-                  <!-- Primary checking now starts at $500.00 -->
+                  <!-- Primary checking -->
                   <div class="card-balance" id="checkingBalance1">$500.00</div>
                   <div class="balance-label">Available Balance</div>
                 </div>
@@ -627,7 +627,7 @@
               </div>
             </div>
           </div>
-          <!-- Scrollable Section: Transaction Log Copy -->
+          <!-- Scrollable Section with an exact replicate of Transaction Log Copy -->
           <div class="scrollable-section">
             <div class="transaction-log" id="transactionLogCopy">
               <h3>Recent Transactions</h3>
@@ -728,22 +728,38 @@
     }
     
     function simulatePurchase() {
-      const purchaseAmount = (Math.random() * 8.99 + 1).toFixed(2);
-      const purchase = parseFloat(purchaseAmount);
-      if (checkingBalance1 < purchase) {
-        alert("Insufficient funds for this purchase.");
-        return;
-      }
-      checkingBalance1 -= purchase;
-      addTransaction("Purchase", -purchase);
-      if (roundUpEnabled) {
-        const roundUpTo = Math.ceil(purchase);
-        const roundUpAmount = roundUpTo - purchase;
-        savingsBalance += roundUpAmount;
-        addTransaction("Savings Deposit", roundUpAmount, true);
-      }
-      updateBalanceDisplays();
-    }
+  const purchaseAmount = (Math.random() * 8.99 + 1).toFixed(2);
+  const purchase = parseFloat(purchaseAmount);
+  
+  if (checkingBalance1 < purchase) {
+    alert("Insufficient funds for this purchase.");
+    return;
+  }
+  
+  // Calculate the rounded purchase amount and the extra deducted amount.
+  const roundedPurchase = Math.ceil(purchase);
+  const roundUpAmount = roundedPurchase - purchase;
+  
+  // Deduct the rounded amount from the checking account.
+  checkingBalance1 -= roundedPurchase;
+  
+  // Log the breakdown:
+  // 1. Exact purchase amount
+  addTransaction(`Exact Purchase: $${purchase.toFixed(2)}`, -purchase);
+  
+  // 2. rounding adjustment 
+  addTransaction(`Rounded to: $${roundedPurchase.toFixed(2)}`, -(roundUpAmount));
+  
+  // 3. Savings deposit 
+  if (roundUpEnabled) {
+    savingsBalance += roundUpAmount;
+    addTransaction(`Savings Deposit: $${roundUpAmount.toFixed(2)}`, roundUpAmount, true);
+  }
+  
+  updateBalanceDisplays();
+}
+
+
     
     function showRoundUpScreen() {
       if (roundUpPhone.style.display === 'block') {
@@ -757,3 +773,4 @@
   </script>
 </body>
 </html>
+
